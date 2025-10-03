@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://mp4_damage.pyscriptapps.com/index/latest/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>视频艺术损坏工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .output-area {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 20px 0;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 16px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        .status {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            font-weight: bold;
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .checkbox-item:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+        .checkbox-item.selected {
+            border-color: #27ae60;
+            background: #d4edda;
+            font-weight: bold;
+        }
+        .checkbox-item input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 150px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .process-btn {
+            background: #27ae60;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .process-btn:hover {
+            background: #219653;
+        }
+        .tutorial-btn {
+            background: #f39c12;
+        }
+        .tutorial-btn:hover {
+            background: #e67e22;
+        }
+        .file-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        /* 自定义输入对话框样式 */
+        .custom-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            min-width: 350px;
+            max-width: 500px;
+        }
+        .custom-dialog h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .custom-dialog p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .custom-dialog input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .custom-dialog-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .custom-dialog-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0;
+            min-width: auto;
+        }
+        .custom-dialog-confirm {
+            background: #27ae60;
+            color: white;
+        }
+        .custom-dialog-confirm:hover {
+            background: #219653;
+        }
+        .custom-dialog-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+        .custom-dialog-cancel:hover {
+            background: #7f8c8d;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        .current-settings {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #3498db;
+        }
+        .current-settings h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .setting-item {
+            margin: 5px 0;
+            padding: 3px 0;
+        }
+        .setting-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .warning {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #27ae60;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* 免责声明对话框样式 */
+        .disclaimer-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 1001;
+            min-width: 400px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .disclaimer-dialog h3 {
+            margin-top: 0;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .disclaimer-content {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .disclaimer-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .disclaimer-content li {
+            margin: 8px 0;
+        }
+        .warning-icon {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .checkbox-container input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        .checkbox-container label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+
+    <link rel="manifest" href="https://mp4_damage.pyscriptapps.com/index/latest/psadc-manifest.json">
+<script type="text/javascript" async="" src="./视频艺术损坏工_files/07f601a1d4aaf.js.下载"></script></head>
+<body>
+    <div class="container">
+        <h1>🎬 视频艺术损坏工具</h1>
+        
+        <div class="status" id="status">等待用户确认免责声明</div>
+
+        <!-- 当前设置显示 -->
+        <div class="current-settings">
+            <h4>📋 当前设置</h4>
+            <div class="setting-item">文件选择: <span id="currentFile" class="setting-value">未选择文件</span></div>
+            <div class="setting-item">工作模式: <span id="currentMode" class="setting-value">MP4模式</span></div>
+            <div class="setting-item">损坏类型: <span id="currentType" class="setting-value">未选择</span></div>
+            <div class="setting-item">损坏强度: <span id="currentIntensity" class="setting-value">未选择</span></div>
+            <div class="setting-item">输出文件名: <span id="currentOutput" class="setting-value">glitched_video.mp4</span></div>
+        </div>
+
+        <!-- 文件选择部分 -->
+        <div class="section">
+            <div class="section-title">📁 文件选择</div>
+            <div class="button-group">
+                <button onclick="selectFile()">选择视频文件</button>
+                <button onclick="showOutputFileDialog()">设置输出文件名</button>
+            </div>
+            <div class="file-info" id="fileInfo">
+                未选择文件
+            </div>
+        </div>
+
+        <!-- 工作模式选择 -->
+        <div class="section">
+            <div class="section-title">⚙️ 工作模式</div>
+            <div class="checkbox-group" id="modeSelection">
+                <div class="checkbox-item selected" onclick="selectMode(&#39;mp4&#39;)">
+                    <input type="radio" name="mode" value="mp4" checked=""> 
+                    MP4模式 (保护关键数据)
+                </div>
+                <div class="checkbox-item" onclick="selectMode(&#39;file&#39;)">
+                    <input type="radio" name="mode" value="file"> 
+                    文件模式 (无保护，全文件损坏)
+                </div>
+            </div>
+        </div>
+
+        <!-- 损坏类型选择 -->
+        <div class="section">
+            <div class="section-title">🎯 损坏类型</div>
+            <div class="checkbox-group" id="typeSelection">
+                <div class="checkbox-item" onclick="selectType(&#39;1&#39;)">
+                    <input type="radio" name="type" value="1"> mode1
+                </div>
+                <div class="checkbox-item" onclick="selectType(&#39;2&#39;)">
+                    <input type="radio" name="type" value="2"> mode2
+                </div>
+                <div class="checkbox-item" onclick="selectType(&#39;3&#39;)">
+                    <input type="radio" name="type" value="3"> mode3
+                </div>
+                <div class="checkbox-item" onclick="selectType(&#39;4&#39;)">
+                    <input type="radio" name="type" value="4"> mode4
+                </div>
+                <div class="checkbox-item" onclick="selectType(&#39;5&#39;)">
+                    <input type="radio" name="type" value="5"> mode5
+                </div>
+                <div class="checkbox-item" onclick="selectType(&#39;6&#39;)">
+                    <input type="radio" name="type" value="6"> mode6
+                </div>
+                <div class="checkbox-item" onclick="selectType(&#39;7&#39;)">
+                    <input type="radio" name="type" value="7"> mode7
+                </div>
+                <div class="checkbox-item" onclick="selectType(&#39;8&#39;)">
+                    <input type="radio" name="type" value="8"> 完全崩溃
+                </div>
+            </div>
+        </div>
+
+        <!-- 损坏强度选择 -->
+        <div class="section">
+            <div class="section-title">⚡ 损坏强度</div>
+            <div class="checkbox-group" id="intensitySelection">
+                <div class="checkbox-item" onclick="selectIntensity(&#39;1&#39;)">
+                    <input type="radio" name="intensity" value="1"> 0.00001 - 极轻微 (0.0001%)
+                </div>
+                <div class="checkbox-item" onclick="selectIntensity(&#39;2&#39;)">
+                    <input type="radio" name="intensity" value="2"> 0.0001 - 轻微 (0.001%)
+                </div>
+                <div class="checkbox-item" onclick="selectIntensity(&#39;3&#39;)">
+                    <input type="radio" name="intensity" value="3"> 0.001 - 中等 (0.01%)
+                </div>
+                <div class="checkbox-item" onclick="selectIntensity(&#39;4&#39;)">
+                    <input type="radio" name="intensity" value="4"> 0.01 - 强烈 (0.1%)
+                </div>
+                <div class="checkbox-item" onclick="selectIntensity(&#39;5&#39;)">
+                    <input type="radio" name="intensity" value="5"> 0.08 - 毁灭级 (0.8%)
+                </div>
+                <div class="checkbox-item" onclick="showCustomIntensityDialog()">
+                    <input type="radio" name="intensity" value="6"> custom - 自定义强度
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="section">
+            <div class="section-title">🚀 处理操作</div>
+            <div class="button-group">
+                <button onclick="startProcessing()" class="process-btn">开始损坏处理</button>
+                <button onclick="showTutorial()" class="tutorial-btn">使用教程</button>
+                <button onclick="resetSettings()">重置设置</button>
+            </div>
+        </div>
+
+        <!-- 进度条 -->
+        <div class="section" id="progressSection" style="display: none;">
+            <div class="section-title">📊 处理进度</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="progressText" style="text-align: center; margin-top: 5px;">0%</div>
+        </div>
+
+        <!-- 输出区域 -->
+        <div class="output-area" id="output">❌ 文件选择已取消，请确认免责声明后继续</div>
+
+        <input type="file" id="fileInput" accept=".mp4" style="display: none;">
+        
+        <!-- 下载链接（隐藏） -->
+        <a id="downloadLink" style="display: none;"></a>
+    </div>
+
+    <!-- 免责声明对话框 -->
+    <div id="disclaimerDialog" class="disclaimer-dialog" style="display: none;">
+        <h3>⚠️ 重要声明</h3>
+        <div class="disclaimer-content">
+            <p><span class="warning-icon">⚠</span> <strong>本工具仅供娱乐和学习目的使用</strong></p>
+            
+            <p><strong>重要提醒：</strong></p>
+            <ul>
+                <li>请使用<strong>没有音频</strong>的视频文件进行处理</li>
+                <li>包含音频的视频文件处理时容易出现故障</li>
+                <li>处理前请备份原始文件</li>
+                <li>损坏后的文件可能无法播放或出现异常</li>
+                <li>本工具不保证处理后的文件质量</li>
+                <li>视频文件请使用MP4格式</li>
+            </ul>
+            
+            <p><strong>建议：</strong></p>
+            <ul>
+                <li>使用短小的测试视频进行尝试</li>
+                <li>从较低的损坏强度开始</li>
+                <li>避免处理重要或珍贵的视频文件</li>
+            </ul>
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="understandCheckbox">
+            <label for="understandCheckbox">我已阅读并理解上述声明，确认使用无音频的视频文件</label>
+        </div>
+        
+        <div class="custom-dialog-buttons">
+            <button class="custom-dialog-cancel" onclick="cancelDisclaimer()">取消</button>
+            <button class="custom-dialog-confirm" onclick="confirmDisclaimer()" id="confirmDisclaimerBtn" disabled="">确认并选择文件</button>
+        </div>
+    </div>
+    <div id="disclaimerOverlay" class="overlay" style="display: none;"></div>
+
+    <!-- 自定义强度输入对话框 -->
+    <div id="customIntensityDialog" class="custom-dialog" style="display: none;">
+        <h3>自定义强度设置</h3>
+        <p>请输入强度值 (0.00001-0.01):</p>
+        <input type="number" id="customIntensityInput" step="0.00001" min="0.00001" max="0.01" value="0.0005" placeholder="例如: 0.0005">
+        <div class="custom-dialog-buttons">
+            <button class="custom-dialog-confirm" onclick="confirmCustomIntensity()">确认</button>
+            <button class="custom-dialog-cancel" onclick="cancelCustomIntensity()">取消</button>
+        </div>
+    </div>
+    <div id="customIntensityOverlay" class="overlay" style="display: none;"></div>
+
+    <!-- 输出文件名设置对话框 -->
+    <div id="outputFileDialog" class="custom-dialog" style="display: none;">
+        <h3>设置输出文件名</h3>
+        <p>请输入输出文件名（将保存到浏览器下载）:</p>
+        <input type="text" id="outputFileInput" placeholder="例如: glitched_video.mp4" value="glitched_video.mp4">
+        <div class="custom-dialog-buttons">
+            <button class="custom-dialog-confirm" onclick="confirmOutputFile()">确认</button>
+            <button class="custom-dialog-cancel" onclick="cancelOutputFile()">取消</button>
+        </div>
+    </div>
+    <div id="outputFileOverlay" class="overlay" style="display: none;"></div>
+
+    <script type="text/javascript" async="" src="./视频艺术损坏工_files/heap-758475466.js.下载"></script><script>
+        // 应用程序状态
+        const app = {
+            inputFile: null,
+            mode: 'mp4',
+            glitchType: '未选择',
+            intensity: '未选择',
+            outputFile: 'glitched_video.mp4',
+            fileContent: null,
+            fileType: null,
+            disclaimerAccepted: false
+        };
+
+        // 显示消息到输出区域
+        function displayMessage(message) {
+            const output = document.getElementById('output');
+            if (output) {
+                output.textContent = message;
+            }
+        }
+
+        // 更新状态栏
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            if (status) {
+                status.textContent = message;
+            }
+        }
+
+        // 更新当前设置显示
+        function updateCurrentSettingsDisplay() {
+            document.getElementById('currentFile').textContent = app.inputFile || '未选择文件';
+            document.getElementById('currentMode').textContent = app.mode === 'mp4' ? 'MP4模式' : '文件模式';
+            document.getElementById('currentType').textContent = app.glitchType;
+            document.getElementById('currentIntensity').textContent = app.intensity;
+            document.getElementById('currentOutput').textContent = app.outputFile;
+        }
+
+        // 显示错误消息
+        function showError(message) {
+            displayMessage('❌ ' + message);
+        }
+
+        // 显示成功消息
+        function showSuccess(message) {
+            displayMessage('✅ ' + message);
+        }
+
+        // 更新进度条
+        function updateProgress(percent) {
+            const progressSection = document.getElementById('progressSection');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            if (progressSection) progressSection.style.display = 'block';
+            if (progressFill) progressFill.style.width = percent + '%';
+            if (progressText) progressText.textContent = percent + '%';
+        }
+
+        // 隐藏进度条
+        function hideProgress() {
+            const progressSection = document.getElementById('progressSection');
+            if (progressSection) progressSection.style.display = 'none';
+        }
+
+        // 文件选择函数 - 显示免责声明
+        function selectFile() {
+            if (!app.disclaimerAccepted) {
+                showDisclaimerDialog();
+            } else {
+                document.getElementById('fileInput').click();
+            }
+        }
+
+        // 显示免责声明对话框
+        function showDisclaimerDialog() {
+            const dialog = document.getElementById('disclaimerDialog');
+            const overlay = document.getElementById('disclaimerOverlay');
+            if (dialog && overlay) {
+                dialog.style.display = 'block';
+                overlay.style.display = 'block';
+                
+                // 重置复选框状态
+                const checkbox = document.getElementById('understandCheckbox');
+                if (checkbox) {
+                    checkbox.checked = false;
+                }
+                
+                // 禁用确认按钮
+                const confirmBtn = document.getElementById('confirmDisclaimerBtn');
+                if (confirmBtn) {
+                    confirmBtn.disabled = true;
+                }
+            }
+        }
+
+        // 确认免责声明
+        function confirmDisclaimer() {
+            const checkbox = document.getElementById('understandCheckbox');
+            if (checkbox && checkbox.checked) {
+                app.disclaimerAccepted = true;
+                hideDisclaimerDialog();
+                // 现在触发文件选择
+                document.getElementById('fileInput').click();
+            }
+        }
+
+        // 取消免责声明
+        function cancelDisclaimer() {
+            hideDisclaimerDialog();
+            displayMessage('❌ 文件选择已取消，请确认免责声明后继续');
+            updateStatus('等待用户确认免责声明');
+        }
+
+        // 隐藏免责声明对话框
+        function hideDisclaimerDialog() {
+            const dialog = document.getElementById('disclaimerDialog');
+            const overlay = document.getElementById('disclaimerOverlay');
+            if (dialog && overlay) {
+                dialog.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+        }
+
+        // 监听免责声明复选框变化
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkbox = document.getElementById('understandCheckbox');
+            const confirmBtn = document.getElementById('confirmDisclaimerBtn');
+            
+            if (checkbox && confirmBtn) {
+                checkbox.addEventListener('change', function() {
+                    confirmBtn.disabled = !this.checked;
+                });
+            }
+        });
+
+        function selectMode(mode) {
+            // 更新单选按钮状态
+            const items = document.querySelectorAll('#modeSelection .checkbox-item');
+            items.forEach(item => {
+                const input = item.querySelector('input');
+                if (input.value === mode) {
+                    item.classList.add('selected');
+                    input.checked = true;
+                } else {
+                    item.classList.remove('selected');
+                    input.checked = false;
+                }
+            });
+            
+            // 更新应用程序状态
+            app.mode = mode;
+            if (mode === 'file') {
+                app.glitchType = '完全崩溃';
+                updateCurrentSettingsDisplay();
+                displayMessage('✅ 已选择工作模式: 文件模式\n\n文件模式已强制使用"完全崩溃"类型');
+            }
+            updateCurrentSettingsDisplay();
+            updateStatus(app.mode === 'mp4' ? '✅ MP4模式' : '✅ 文件模式');
+        }
+
+        function selectType(type) {
+            if (app.mode === 'file') {
+                displayMessage('ℹ️ 文件模式已强制使用"完全崩溃"类型');
+                return;
+            }
+            
+            // 更新单选按钮状态
+            const items = document.querySelectorAll('#typeSelection .checkbox-item');
+            items.forEach(item => {
+                const input = item.querySelector('input');
+                if (input.value === type) {
+                    item.classList.add('selected');
+                    input.checked = true;
+                } else {
+                    item.classList.remove('selected');
+                    input.checked = false;
+                }
+            });
+            
+            // 更新应用程序状态
+            const types = {
+                '1': 'mode1', '2': 'mode2', '3': 'mode3', 
+                '4': 'mode4', '5': 'mode5', '6': 'mode6', 
+                '7': 'mode7', '8': '完全崩溃'
+            };
+            app.glitchType = types[type] || '未选择';
+            updateCurrentSettingsDisplay();
+            updateStatus('✅ 损坏类型: ' + app.glitchType);
+            
+            const typeDescriptions = {
+                'mode1': '线条损坏效果 - 模拟扫描线故障',
+                'mode2': '时间倒流效果 - 创建时间反转效果', 
+                'mode3': '色块异常效果 - 产生色块失真',
+                'mode4': '数据混合效果 - 混合数据创建混乱',
+                'mode5': '画面冻结效果 - 模拟画面冻结',
+                'mode6': '画面抖动效果 - 创建抖动效果',
+                'mode7': '通道偏移效果 - RGB通道偏移',
+                '完全崩溃': '混合全部效果 - 最大程度的损坏'
+            };
+            
+            const description = typeDescriptions[app.glitchType] || '';
+            displayMessage('✅ 已选择损坏类型: ' + app.glitchType + '\n\n' + description);
+        }
+
+        function selectIntensity(intensity) {
+            // 更新单选按钮状态
+            const items = document.querySelectorAll('#intensitySelection .checkbox-item');
+            items.forEach(item => {
+                const input = item.querySelector('input');
+                if (input.value === intensity) {
+                    item.classList.add('selected');
+                    input.checked = true;
+                } else {
+                    item.classList.remove('selected');
+                    input.checked = false;
+                }
+            });
+            
+            // 更新应用程序状态
+            const intensities = {
+                '1': '0.00001 - 极轻微 (0.0001%)',
+                '2': '0.0001 - 轻微 (0.001%)', 
+                '3': '0.001 - 中等 (0.01%)',
+                '4': '0.01 - 强烈 (0.1%)',
+                '5': '0.08 - 毁灭级 (0.8%)'
+            };
+            app.intensity = intensities[intensity] || '未选择';
+            updateCurrentSettingsDisplay();
+            
+            const intensityValue = app.intensity.split(' - ')[0];
+            updateStatus('✅ 强度: ' + intensityValue);
+            
+            const intensityDescriptions = {
+                '1': '极轻微 - 几乎不可见的微小变化',
+                '2': '轻微 - 细微的艺术效果',
+                '3': '中等 - 明显的损坏效果', 
+                '4': '强烈 - 显著的视觉冲击',
+                '5': '毁灭级 - 最大程度的损坏'
+            };
+            
+            const description = intensityDescriptions[intensity] || '';
+            displayMessage('✅ 已选择损坏强度: ' + app.intensity + '\n\n' + description);
+        }
+
+        // 自定义强度对话框函数
+        function showCustomIntensityDialog() {
+            const dialog = document.getElementById('customIntensityDialog');
+            const overlay = document.getElementById('customIntensityOverlay');
+            if (dialog && overlay) {
+                dialog.style.display = 'block';
+                overlay.style.display = 'block';
+                
+                const input = document.getElementById('customIntensityInput');
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }
+        }
+
+        function confirmCustomIntensity() {
+            const input = document.getElementById('customIntensityInput');
+            if (input && input.value) {
+                const value = input.value;
+                try {
+                    const floatValue = parseFloat(value);
+                    if (floatValue >= 0.00001 && floatValue <= 0.01) {
+                        // 更新单选按钮状态
+                        const customItem = document.querySelector('#intensitySelection .checkbox-item:nth-child(6)');
+                        if (customItem) {
+                            customItem.classList.add('selected');
+                            customItem.querySelector('input').checked = true;
+                        }
+                        
+                        // 更新应用程序状态
+                        app.intensity = `custom (${value})`;
+                        updateCurrentSettingsDisplay();
+                        updateStatus('✅ 自定义强度: ' + value);
+                        
+                        displayMessage(`✅ 已设置自定义强度: ${value}\n\n这将损坏约 ${(floatValue*1000).toFixed(3)}% 的安全区域字节`);
+                        hideCustomIntensityDialog();
+                    } else {
+                        alert('强度值必须在 0.00001 到 0.01 之间');
+                    }
+                } catch (e) {
+                    alert('请输入有效的数字');
+                }
+            } else {
+                alert('请输入强度值');
+            }
+        }
+
+        function cancelCustomIntensity() {
+            hideCustomIntensityDialog();
+            displayMessage('❌ 已取消自定义强度设置');
+        }
+
+        function hideCustomIntensityDialog() {
+            const dialog = document.getElementById('customIntensityDialog');
+            const overlay = document.getElementById('customIntensityOverlay');
+            if (dialog && overlay) {
+                dialog.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+        }
+
+        // 输出文件名设置对话框函数
+        function showOutputFileDialog() {
+            const dialog = document.getElementById('outputFileDialog');
+            const overlay = document.getElementById('outputFileOverlay');
+            if (dialog && overlay) {
+                const input = document.getElementById('outputFileInput');
+                if (input) {
+                    input.value = app.outputFile;
+                }
+                
+                dialog.style.display = 'block';
+                overlay.style.display = 'block';
+                
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }
+        }
+
+        function confirmOutputFile() {
+            const input = document.getElementById('outputFileInput');
+            if (input) {
+                let value = input.value.trim();
+                if (value) {
+                    // 确保有正确的文件扩展名
+                    if (!value.toLowerCase().endsWith('.mp4')) {
+                        value += '.mp4';
+                    }
+                    
+                    // 更新应用程序状态
+                    app.outputFile = value;
+                    updateCurrentSettingsDisplay();
+                    
+                    hideOutputFileDialog();
+                    showSuccess(`输出文件名已设置为: ${value}`);
+                    updateStatus('✅ 输出文件名已设置');
+                } else {
+                    alert('请输入有效的文件名');
+                }
+            }
+        }
+
+        function cancelOutputFile() {
+            hideOutputFileDialog();
+        }
+
+        function hideOutputFileDialog() {
+            const dialog = document.getElementById('outputFileDialog');
+            const overlay = document.getElementById('outputFileOverlay');
+            if (dialog && overlay) {
+                dialog.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+        }
+
+        // 重置设置
+        function resetSettings() {
+            app.inputFile = null;
+            app.fileContent = null;
+            app.mode = 'mp4';
+            app.glitchType = '未选择';
+            app.intensity = '未选择';
+            app.outputFile = 'glitched_video.mp4';
+            app.disclaimerAccepted = false; // 重置免责声明状态
+            
+            // 重置UI
+            selectMode('mp4');
+            updateCurrentSettingsDisplay();
+            hideProgress();
+            
+            // 重置文件信息
+            const fileInfo = document.getElementById('fileInfo');
+            if (fileInfo) {
+                fileInfo.textContent = '未选择文件';
+                fileInfo.style.background = '#fff3cd';
+                fileInfo.style.borderLeftColor = '#ffc107';
+            }
+            
+            displayMessage('✅ 设置已重置');
+            updateStatus('工具已就绪，请选择文件开始...');
+        }
+
+        // 显示教程
+        function showTutorial() {
+            const tutorialText = `📚 视频艺术损坏工具 - 使用教程
+
+🎯 基本用法:
+1. 点击"选择视频文件"选择文件
+2. 在工作模式中选择 MP4模式 或 文件模式
+3. 在损坏类型中选择想要的效果
+4. 在损坏强度中选择损坏程度
+5. 点击"开始损坏处理"
+
+🔧 工作模式说明:
+• MP4模式 - 保护关键数据，确保文件可播放
+• 文件模式 - 无保护，全文件损坏
+
+🎨 损坏类型说明:
+• mode1-mode7 - 不同的艺术损坏效果
+• 完全崩溃 - 混合全部效果
+
+⚡ 强度级别说明:
+• 0.00001 - 损坏 0.0001% 字节 (极轻微)
+• 0.0001  - 损坏 0.001%  字节 (轻微)
+• 0.001   - 损坏 0.01%    字节 (中等)
+• 0.01    - 损坏 0.1%     字节 (强烈)
+• 0.08    - 损坏 0.8%     字节 (毁灭级)
+
+⚠️ 重要提醒:
+• 请使用没有音频的视频文件
+• 处理前请备份重要文件
+• 文件模式可能创建无法播放的文件
+• 使用合适的强度以获得最佳效果
+• 处理完成后文件将自动下载`;
+            
+            displayMessage(tutorialText);
+            updateStatus('📚 查看教程');
+        }
+
+        // 验证参数
+        function validateParameters() {
+            if (!app.inputFile) {
+                return '请先选择要处理的视频文件';
+            }
+            if (app.glitchType === '未选择') {
+                return '请选择损坏类型';
+            }
+            if (app.intensity === '未选择') {
+                return '请选择损坏强度';
+            }
+            return null;
+        }
+
+        // 获取强度数值
+        function getIntensityValue() {
+            if (app.intensity.startsWith('custom')) {
+                const match = app.intensity.match(/custom\s*\(([^)]+)\)/);
+                return match ? parseFloat(match[1]) : 0.0005;
+            }
+            
+            const intensityMap = {
+                '0.00001 - 极轻微 (0.0001%)': 0.00001,
+                '0.0001 - 轻微 (0.001%)': 0.0001,
+                '0.001 - 中等 (0.01%)': 0.001,
+                '0.01 - 强烈 (0.1%)': 0.01,
+                '0.08 - 毁灭级 (0.8%)': 0.08
+            };
+            
+            return intensityMap[app.intensity] || 0.0001;
+        }
+
+        // 查找保护区
+        function findProtectedRegions(arrayBuffer) {
+            const dataView = new DataView(arrayBuffer);
+            const protectedRegions = [];
+            
+            // 查找 "mdat" 字符串 (0x6D 0x64 0x61 0x74)
+            for (let i = 0; i < arrayBuffer.byteLength - 4; i++) {
+                if (dataView.getUint8(i) === 0x6D && 
+                    dataView.getUint8(i+1) === 0x64 && 
+                    dataView.getUint8(i+2) === 0x61 && 
+                    dataView.getUint8(i+3) === 0x74) {
+                    // 保护从开始到 mdat+128 的位置
+                    protectedRegions.push({ start: 0, end: i + 128 });
+                }
+            }
+            
+            // 查找 "mp4" 字符串 (0x6D 0x70 0x34)
+            for (let i = 0; i < arrayBuffer.byteLength - 3; i++) {
+                if (dataView.getUint8(i) === 0x6D && 
+                    dataView.getUint8(i+1) === 0x70 && 
+                    dataView.getUint8(i+2) === 0x34) {
+                    // 保护从开始到 mp4+128 的位置
+                    protectedRegions.push({ start: 0, end: i + 128 });
+                }
+            }
+            
+            // 如果没有找到关键字符串，保护前1024个字节
+            if (protectedRegions.length === 0) {
+                protectedRegions.push({ start: 0, end: 1024 });
+            }
+            
+            // 合并重叠的保护区
+            protectedRegions.sort((a, b) => a.start - b.start);
+            const mergedRegions = [];
+            let currentRegion = protectedRegions[0];
+            
+            for (let i = 1; i < protectedRegions.length; i++) {
+                const region = protectedRegions[i];
+                if (region.start <= currentRegion.end) {
+                    currentRegion.end = Math.max(currentRegion.end, region.end);
+                } else {
+                    mergedRegions.push(currentRegion);
+                    currentRegion = region;
+                }
+            }
+            mergedRegions.push(currentRegion);
+            
+            return mergedRegions;
+        }
+
+        // 检查位置是否在保护区内
+        function isProtected(position, protectedRegions) {
+            for (const region of protectedRegions) {
+                if (position >= region.start && position < region.end) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 真正的视频损坏处理函数 - 效果减少100倍
+        function glitchVideo(arrayBuffer, type, intensity) {
+            const data = new Uint8Array(arrayBuffer);
+            const totalBytes = data.length;
+            
+            // 如果是MP4模式，计算保护区
+            let protectedRegions = [];
+            let protectionInfo = "";
+            if (app.mode === 'mp4') {
+                protectedRegions = findProtectedRegions(arrayBuffer);
+                protectionInfo = `🛡️ MP4模式保护激活\n找到 ${protectedRegions.length} 个保护区\n`;
+            }
+            
+            // 根据强度计算要损坏的字节数 - 减少100倍
+            let bytesToCorrupt;
+            if (intensity === 0.08) { // 毁灭级
+                bytesToCorrupt = Math.floor(totalBytes * 0.008); // 0.8% 而不是 80%
+            } else {
+                bytesToCorrupt = Math.floor(totalBytes * intensity * 0.001); // 减少100倍
+            }
+            
+            // 确保至少损坏1个字节
+            bytesToCorrupt = Math.max(1, bytesToCorrupt);
+            
+            let corruptedCount = 0;
+            let protectedCount = 0;
+            
+            // 根据损坏类型应用不同的损坏模式
+            switch(type) {
+                case 'mode1': // 线条损坏 - 减少损坏范围
+                    for (let i = 0; i < bytesToCorrupt; i++) {
+                        const pos = Math.floor(Math.random() * (totalBytes - 10)) + 5;
+                        if (!isProtected(pos, protectedRegions)) {
+                            // 只损坏2-3个字节而不是10个
+                            const damageLength = 2 + Math.floor(Math.random() * 2);
+                            for (let j = 0; j < damageLength; j++) {
+                                if (pos + j < totalBytes && !isProtected(pos + j, protectedRegions)) {
+                                    // 轻微变化而不是完全随机
+                                    data[pos + j] = (data[pos + j] + Math.floor(Math.random() * 16)) % 256;
+                                    corruptedCount++;
+                                }
+                            }
+                        } else {
+                            protectedCount++;
+                        }
+                    }
+                    break;
+                    
+                case 'mode2': // 时间倒流 - 减少交换频率
+                    for (let i = 0; i < bytesToCorrupt / 2; i++) {
+                        const pos = Math.floor(Math.random() * totalBytes);
+                        if (!isProtected(pos, protectedRegions) && pos < totalBytes - 4) {
+                            const temp = data[pos];
+                            data[pos] = data[pos + 4];
+                            data[pos + 4] = temp;
+                            corruptedCount += 2;
+                        } else {
+                            protectedCount++;
+                        }
+                    }
+                    break;
+                    
+                case 'mode3': // 色块异常 - 减少块大小
+                    for (let i = 0; i < bytesToCorrupt; i++) {
+                        const pos = Math.floor(Math.random() * totalBytes);
+                        if (!isProtected(pos, protectedRegions) && pos < totalBytes - 5) {
+                            const blockSize = 2 + Math.floor(Math.random() * 3); // 2-4个字节
+                            for (let j = 0; j < blockSize; j++) {
+                                if (pos + j < totalBytes && !isProtected(pos + j, protectedRegions)) {
+                                    // 轻微的颜色偏移
+                                    data[pos + j] = (data[pos + j] + 32) % 256;
+                                    corruptedCount++;
+                                }
+                            }
+                        } else {
+                            protectedCount++;
+                        }
+                    }
+                    break;
+                    
+                case 'mode4': // 数据混合 - 减少交换次数
+                    for (let i = 0; i < bytesToCorrupt / 3; i++) {
+                        const pos1 = Math.floor(Math.random() * totalBytes);
+                        const pos2 = Math.floor(Math.random() * totalBytes);
+                        if (!isProtected(pos1, protectedRegions) && !isProtected(pos2, protectedRegions)) {
+                            const temp = data[pos1];
+                            data[pos1] = data[pos2];
+                            data[pos2] = temp;
+                            corruptedCount += 2;
+                        } else {
+                            protectedCount++;
+                        }
+                    }
+                    break;
+                    
+                case 'mode5': // 画面冻结 - 减少冻结区域
+                    for (let i = 0; i < bytesToCorrupt / 20; i++) {
+                        const pos = Math.floor(Math.random() * (totalBytes - 100));
+                        if (!isProtected(pos, protectedRegions)) {
+                            const freezeSize = 10 + Math.floor(Math.random() * 40); // 10-50个字节
+                            const freezeValue = Math.floor(Math.random() * 256);
+                            for (let j = 0; j < freezeSize; j++) {
+                                if (pos + j < totalBytes && !isProtected(pos + j, protectedRegions)) {
+                                    data[pos + j] = freezeValue;
+                                    corruptedCount++;
+                                }
+                            }
+                        } else {
+                            protectedCount++;
+                        }
+                    }
+                    break;
+                    
+                case 'mode6': // 画面抖动 - 减少抖动强度
+                    for (let i = 0; i < bytesToCorrupt; i++) {
+                        const pos = Math.floor(Math.random() * totalBytes);
+                        if (!isProtected(pos, protectedRegions) && pos < totalBytes - 2) {
+                            // 轻微抖动
+                            data[pos] = (data[pos] + data[pos + 1] * 0.1) % 256;
+                            corruptedCount++;
+                        } else {
+                            protectedCount++;
+                        }
+                    }
+                    break;
+                    
+                case 'mode7': // 通道偏移 - 减少偏移量
+                    for (let i = 0; i < bytesToCorrupt; i++) {
+                        const pos = Math.floor(Math.random() * totalBytes);
+                        if (!isProtected(pos, protectedRegions) && pos < totalBytes - 1) {
+                            data[pos] = data[pos + 1];
+                            corruptedCount++;
+                        } else {
+                            protectedCount++;
+                        }
+                    }
+                    break;
+                    
+                case '完全崩溃': // 混合全部效果 - 大幅减少强度
+                    const methods = ['mode1', 'mode2', 'mode3', 'mode4', 'mode5', 'mode6', 'mode7'];
+                    const tempData = new Uint8Array(data);
+                    
+                    for (const method of methods) {
+                        const methodBytes = Math.floor(bytesToCorrupt / methods.length / 3); // 进一步减少
+                        for (let i = 0; i < methodBytes; i++) {
+                            const pos = Math.floor(Math.random() * totalBytes);
+                            if (!isProtected(pos, protectedRegions)) {
+                                if (method === 'mode1' && pos < totalBytes - 3) {
+                                    for (let j = 0; j < 2; j++) {
+                                        if (pos + j < totalBytes && !isProtected(pos + j, protectedRegions)) {
+                                            tempData[pos + j] = (tempData[pos + j] + 8) % 256;
+                                        }
+                                    }
+                                } else if (method === 'mode2' && pos < totalBytes - 4 && Math.random() < 0.3) {
+                                    [tempData[pos], tempData[pos + 4]] = [tempData[pos + 4], tempData[pos]];
+                                } else if (method === 'mode3' && pos < totalBytes - 2) {
+                                    for (let j = 0; j < 2; j++) {
+                                        if (pos + j < totalBytes && !isProtected(pos + j, protectedRegions)) {
+                                            tempData[pos + j] = (tempData[pos + j] + 16) % 256;
+                                        }
+                                    }
+                                } else if (method === 'mode4' && Math.random() < 0.2) {
+                                    const pos2 = Math.floor(Math.random() * totalBytes);
+                                    if (!isProtected(pos2, protectedRegions)) {
+                                        [tempData[pos], tempData[pos2]] = [tempData[pos2], tempData[pos]];
+                                    }
+                                } else if (method === 'mode5' && pos < totalBytes - 10 && Math.random() < 0.1) {
+                                    const freezeValue = tempData[pos];
+                                    for (let j = 0; j < 5; j++) {
+                                        if (pos + j < totalBytes && !isProtected(pos + j, protectedRegions)) {
+                                            tempData[pos + j] = freezeValue;
+                                        }
+                                    }
+                                } else if (method === 'mode6' && pos < totalBytes - 2) {
+                                    tempData[pos] = (tempData[pos] + tempData[pos + 1] * 0.05) % 256;
+                                } else if (method === 'mode7' && pos < totalBytes - 1) {
+                                    tempData[pos] = tempData[pos + 1];
+                                }
+                                corruptedCount++;
+                            } else {
+                                protectedCount++;
+                            }
+                        }
+                    }
+                    
+                    // 将临时数据复制回原数组
+                    for (let i = 0; i < totalBytes; i++) {
+                        data[i] = tempData[i];
+                    }
+                    break;
+                    
+                default: // 默认损坏模式 - 轻微随机变化
+                    for (let i = 0; i < bytesToCorrupt; i++) {
+                        const pos = Math.floor(Math.random() * totalBytes);
+                        if (!isProtected(pos, protectedRegions)) {
+                            // 轻微变化而不是完全随机
+                            data[pos] = (data[pos] + Math.floor(Math.random() * 8)) % 256;
+                            corruptedCount++;
+                        } else {
+                            protectedCount++;
+                        }
+                    }
+            }
+            
+            return {
+                buffer: data.buffer,
+                protectionInfo: protectionInfo + `保护了 ${protectedCount} 个字节，损坏了 ${corruptedCount} 个字节`
+            };
+        }
+
+        // 开始处理
+        async function startProcessing() {
+            const error = validateParameters();
+            if (error) {
+                showError(error);
+                updateStatus('❌ 参数不完整');
+                return;
+            }
+
+            if (!app.fileContent) {
+                showError('文件内容未加载，请重新选择文件');
+                return;
+            }
+
+            // 显示确认信息
+            const confirmText = `🔍 处理确认
+
+📁 输入文件: ${app.inputFile}
+🎯 损坏类型: ${app.glitchType}
+⚙️ 工作模式: ${app.mode === 'mp4' ? 'MP4模式' : '文件模式'}
+⚡ 损坏强度: ${app.intensity}
+💾 输出文件: ${app.outputFile}
+
+🔄 开始处理中...`;
+            
+            displayMessage(confirmText);
+            updateStatus('🔄 处理中...');
+            updateProgress(0);
+
+            try {
+                // 获取强度数值
+                const intensityValue = getIntensityValue();
+                
+                // 模拟处理进度
+                for (let i = 0; i <= 5; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    const percent = i * 20;
+                    updateProgress(percent);
+                    
+                    let progressText = '正在处理文件...\n';
+                    for (let j = 0; j <= i; j++) {
+                        progressText += `📊 处理进度: ${j * 20}%\n`;
+                    }
+                    displayMessage(confirmText + '\n' + progressText);
+                }
+
+                // 真正的视频损坏处理
+                updateProgress(60);
+                displayMessage(confirmText + '\n📊 处理进度: 60%\n🔧 正在应用损坏效果...');
+                
+                const result = glitchVideo(app.fileContent, app.glitchType, intensityValue);
+                const glitchedBuffer = result.buffer;
+                const protectionInfo = result.protectionInfo;
+                
+                updateProgress(80);
+                displayMessage(confirmText + '\n📊 处理进度: 80%\n💾 正在生成输出文件...');
+                
+                // 计算损坏统计
+                const originalSize = app.fileContent.byteLength;
+                const glitchedSize = glitchedBuffer.byteLength;
+                const corruptedBytes = Math.abs(glitchedSize - originalSize);
+                const corruptionRate = ((corruptedBytes / originalSize) * 100).toFixed(4);
+                
+                updateProgress(100);
+                
+                // 显示结果
+                const resultText = `✅ 处理完成!
+
+📊 处理统计:
+• 原始文件大小: ${(originalSize / 1024 / 1024).toFixed(2)} MB
+• 损坏后大小: ${(glitchedSize / 1024 / 1024).toFixed(2)} MB  
+• 损坏字节数: ${corruptedBytes.toLocaleString()} 字节
+• 损坏率: ${corruptionRate}%
+
+📁 文件信息:
+• 输入文件: ${app.inputFile}
+• 工作模式: ${app.mode}
+• 损坏类型: ${app.glitchType}
+• 损坏强度: ${app.intensity}
+• 输出文件: ${app.outputFile}
+
+${protectionInfo}
+
+💾 文件已准备下载`;
+                
+                displayMessage(resultText);
+                updateStatus('✅ 处理完成');
+
+                // 创建下载链接
+                const blob = new Blob([glitchedBuffer], { type: 'video/mp4' });
+                const url = URL.createObjectURL(blob);
+                const downloadLink = document.getElementById('downloadLink');
+                
+                if (downloadLink) {
+                    downloadLink.href = url;
+                    downloadLink.download = app.outputFile;
+                    downloadLink.click();
+                    
+                    // 清理URL对象
+                    setTimeout(() => {
+                        URL.revokeObjectURL(url);
+                    }, 1000);
+                }
+
+            } catch (error) {
+                showError('处理过程中发生错误: ' + error.message);
+                updateStatus('❌ 处理失败');
+                hideProgress();
+            }
+        }
+
+        // 文件输入处理
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    app.inputFile = file.name;
+                    app.fileContent = e.target.result;
+                    app.fileType = file.type;
+                    
+                    // 更新文件信息显示
+                    const fileInfo = document.getElementById('fileInfo');
+                    if (fileInfo) {
+                        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                        fileInfo.innerHTML = `<strong>✅ 已选择文件:</strong> ${file.name}<br>
+                                            <strong>📊 文件大小:</strong> ${fileSize} MB<br>
+                                            <strong>📝 文件类型:</strong> ${file.type || '未知'}`;
+                        fileInfo.style.background = '#d4edda';
+                        fileInfo.style.borderLeftColor = '#27ae60';
+                    }
+                    
+                    // 自动设置输出文件名
+                    const baseName = file.name.replace(/\.[^/.]+$/, "");
+                    app.outputFile = `${baseName}_glitched.mp4`;
+                    updateCurrentSettingsDisplay();
+                    
+                    updateStatus('✅ 文件已加载');
+                    showSuccess(`文件 "${file.name}" 已成功加载，准备处理`);
+                };
+                
+                reader.onerror = function() {
+                    showError('文件读取失败');
+                    updateStatus('❌ 文件读取失败');
+                };
+                
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        // 初始化设置显示
+        updateCurrentSettingsDisplay();
+        updateStatus('工具已就绪，请选择文件开始...');
+        displayMessage('🎬 视频艺术损坏工具\n\n欢迎使用！请按照以下步骤操作：\n1. 选择要处理的视频文件\n2. 设置损坏参数\n3. 开始处理\n\n使用"使用教程"按钮查看详细说明。');
+    </script>
+<svg style="z-index:9997;position:fixed;bottom:0;right:0" viewBox="0 0 315 27" width="315" height="27">
+  <path d="M143.905 0.043004L85.585 0.105C75.385 0.0870005 66.415 1.866 58.655 5.535C50.765 9.265 42.855 12.989 34.975 16.73C27.165 20.443 26.057 22.638 15.778 22.501C5.775 22.368 2.44 26.781 0 26.781L0.545006 26.693C22.005 26.672 43.455 26.676 64.915 26.676C90.655 26.676 116.395 26.665 142.135 26.699C143.115 26.699 143.915 26.259 143.915 25.707C143.855 11.729 143.855 14.026 143.915 0.0490007L143.905 0.043004Z" fill="#292929"></path>
+  <path d="M140.258 0L315 0.340524L314.966 27L140 26.9616L140.258 0Z" fill="#292929"></path>
+</svg>
+<div style="z-index:9998;font-family:sans-serif;background-color:#292929;padding:2px 8px;position:fixed;bottom:0;right:0;left:0"></div>
+<div style="z-index:9999;color:white;font-size: 0.7rem;font-family:sans-serif;padding: 5px;position:fixed;bottom:0;right:0">
+  <a href="https://pyscript.com/@mp4_damage" id="made-on" target="_blank" style="color:#FFF;text-decoration:none;">Made on pyscript.com</a>&nbsp;│&nbsp;<a href="https://pyscript.com/@mp4_damage/index/latest" id="view-code" target="_blank" style="color:#FFF;text-decoration:none;">View Code</a><span id="install-pwa-section">&nbsp;│&nbsp; <a id="install-pwa" style="cursor:pointer; color:#FFF;">Install</a></span>&nbsp;&nbsp;
+</div>
+
+<script>
+let installPrompt = null;
+const installSection = document.querySelector("#install-pwa-section")
+const installButton = document.querySelector("#install-pwa");
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  if ("onappinstalled" in window) {
+    installSection.removeAttribute("hidden")
+  }
+  event.preventDefault();
+  installPrompt = event;
+});
+
+installButton.addEventListener("click", async () => {
+  if (!installPrompt) {
+    return;
+  }
+  const result = await installPrompt.prompt();
+  disableInAppInstallPrompt();
+});
+
+function disableInAppInstallPrompt() {
+  installPrompt = null;
+  installButton.setAttribute("hidden", "");
+};
+</script>
+
+<script>
+  const heap_app_id = "758475466";
+  // Only add analytics if we got an id
+  if (heap_app_id) {
+    // Analytics code
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+    heap.load(heap_app_id);
+
+    // Add event listener to the made-on link
+    document.querySelector("#made-on").addEventListener("click", () => {
+      heap.track("PSADC - Make on Pyscript");
+    });
+    // Add event listener to the view-code link
+    document.querySelector("#view-code").addEventListener("click", () => {
+      heap.track("PSADC - View Code");
+    });
+    // Add event listener to the install-pwa link
+    document.querySelector("#install-pwa").addEventListener("click", () => {
+      heap.track("PSADC - Install PWA");
+    });
+  }
+</script>
+<cs-native-frame-holder hidden=""><template shadowrootmode="closed"><iframe id="cs-native-frame" hidden="" title="Intentionally blank" sandbox="allow-same-origin"></iframe></template></cs-native-frame-holder></body></html>
