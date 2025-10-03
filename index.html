@@ -781,7 +781,7 @@
                         displayMessage(`✅ 已设置自定义强度: ${value}\n\n这将损坏约 ${(floatValue*1000).toFixed(3)}% 的安全区域字节`);
                         hideCustomIntensityDialog();
                     } else {
-                        alert('强度值必须在 0.00001 到 0.01 之间');
+                        alert('强度值必须在 0.00001 到 100 之间');
                     }
                 } catch (e) {
                     alert('请输入有效的数字');
