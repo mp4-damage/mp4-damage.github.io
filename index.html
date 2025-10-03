@@ -765,7 +765,7 @@
                 const value = input.value;
                 try {
                     const floatValue = parseFloat(value);
-                    if (floatValue >= 0.00001 && floatValue <= 0.01) {
+                    if (floatValue >= 0.00001 && floatValue <= 100) {
                         // 更新单选按钮状态
                         const customItem = document.querySelector('#intensitySelection .checkbox-item:nth-child(6)');
                         if (customItem) {
