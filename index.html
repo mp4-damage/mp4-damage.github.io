@@ -778,7 +778,7 @@
                         updateCurrentSettingsDisplay();
                         updateStatus('✅ 自定义强度: ' + value);
                         
-                        displayMessage(`✅ 已设置自定义强度: ${value}\n\n这将损坏约 ${(floatValue*1000).toFixed(3)}% 的安全区域字节`);
+                        displayMessage(`✅ 已设置自定义强度: ${value}\n\n请抉择好强度`);
                         hideCustomIntensityDialog();
                     } else {
                         alert('强度值必须在 0.00001 到 100 之间');
