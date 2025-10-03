@@ -477,8 +477,8 @@
     <!-- 自定义强度输入对话框 -->
     <div id="customIntensityDialog" class="custom-dialog" style="display: none;">
         <h3>自定义强度设置</h3>
-        <p>请输入强度值 (0.00001-0.01):</p>
-        <input type="number" id="customIntensityInput" step="0.00001" min="0.00001" max="0.01" value="0.0005" placeholder="例如: 0.0005">
+        <p>请输入强度值 (0.00001-100):</p>
+        <input type="number" id="customIntensityInput" step="0.00001" min="0.00001" max="100" value="0.0005" placeholder="例如: 0.0005">
         <div class="custom-dialog-buttons">
             <button class="custom-dialog-confirm" onclick="confirmCustomIntensity()">确认</button>
             <button class="custom-dialog-cancel" onclick="cancelCustomIntensity()">取消</button>
