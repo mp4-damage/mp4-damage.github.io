@@ -967,8 +967,8 @@
                     dataView.getUint8(i+1) === 0x64 && 
                     dataView.getUint8(i+2) === 0x61 && 
                     dataView.getUint8(i+3) === 0x74) {
-                    // 保护从开始到 mdat±128 的位置
-                    protectedRegions.push({ start: i - 1024 , end: i + 1024 });
+                    // 保护从开始到 mdat±1024 的位置
+                    protectedRegions.push({ start: 0 , end: i + 1024 });
                 }
             }
             
@@ -977,7 +977,7 @@
                 if (dataView.getUint8(i) === 0x6D && 
                     dataView.getUint8(i+1) === 0x70 && 
                     dataView.getUint8(i+2) === 0x34) {
-                    // 保护从开始到 mp4+128 的位置
+                    // 保护从开始到 mp4+1024 的位置
                     protectedRegions.push({ start: i - 1024 , end: i + 1024 });
                 }
             }
